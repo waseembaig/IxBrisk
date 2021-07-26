@@ -1,0 +1,40 @@
+components:
+  schemas:
+    Command:
+      #x-include: 
+      #- '../common/common.yaml#/components/schemas/Named.Object'
+      description: >-
+        Commands config such GET, PUT 
+      type: object
+      required: [command_type]
+      properties:
+        url:
+          description: >-
+            url for ethernet
+            -> Id is the stack ID of ethernet
+            -> Id2 is the IPV stack objectID
+            ->http://localhost:8080/api/v0/sessions/11/ixload/test/activeTest/communityList/0/activityList/0/agent/actionList
+          type: string
+          default: 'actionList/'
+        command_type:
+          description: >-
+            The ipv4 address.
+          type: string
+        profile:
+          description: >-
+            Count for the MAC.
+          type: integer
+          default: -1
+        enable_di:
+          description: >-
+            The ipv4 address of the gateway.
+          type: integer
+          default: 0
+        destination:
+          description: >-
+            The prefix of the ipv4 address.
+          type: string
+        page_object:
+          description: >-
+            Count for the MAC.
+          type: string

@@ -1,0 +1,49 @@
+openapi: 3.1.0
+
+info:
+  title: Port models
+  version: ^0.0.0
+
+components:
+  schemas:
+    Port:
+      x-include: 
+      - '../common/common.yaml#/components/schemas/Named.Object'
+      description: >-
+        An abstract test port.
+      type: object
+      properties:
+        url:
+          description: >-
+            url for portList.
+            {id} is the community object ID
+          type: string
+          default: 'portList/'
+        chassis_id:
+          description: >- 
+            The chassis id  of port
+          type: integer
+        card_id:
+          description: >- 
+            The card id  of port
+          type: integer
+        port_id:
+          description: >- 
+            The port id  of port
+          type: integer
+
+    Port.Options:
+      description: >-
+        Common port options that apply to all configured Port objects. 
+      type: object
+      properties:
+        location_preemption:
+          description: >-
+            Preempt all the test port locations as defined by the 
+            Port.Port.properties.location.
+            If the test ports defined by their location values are in use and 
+            this value is true, the test ports will be preempted.
+          type: boolean
+          default: false
+
+ 

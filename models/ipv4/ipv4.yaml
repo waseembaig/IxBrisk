@@ -1,0 +1,33 @@
+components:
+  schemas:
+    Ipv4:
+      #x-include: 
+      #- '../common/common.yaml#/components/schemas/Named.Object'
+      description: >-
+        Emulated ipv4 interface
+      type: object
+      properties:
+        url:
+          description: >-
+            url for ethernet
+            -> Id is the stack ID of ethernet
+            -> Id2 is the IPV stack objectID
+            ->http://localhost:8080/api/v0/sessions/0/ixload/test/activeTest/communityList/0/network/stack/childrenList/2/childrenList/3/rangeList
+          type: string
+          default: 'childrenList/{id}/rangeList'
+        address:
+          description: >-
+            The ipv4 address.
+          $ref: './patterns.yaml#/components/schemas/Device.Pattern'
+        gateway:
+          description: >-
+            The ipv4 address of the gateway.
+          $ref: './patterns.yaml#/components/schemas/Device.Pattern'
+        prefix:
+          description: >-
+            The prefix of the ipv4 address.
+          $ref: './patterns.yaml#/components/schemas/Device.Pattern'
+        count:
+          description: >-
+            Count for the MAC.
+          type: integer

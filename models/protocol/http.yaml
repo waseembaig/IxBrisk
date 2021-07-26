@@ -1,0 +1,116 @@
+openapi: 3.1.0
+
+info:
+  title: Emulated ethernet protocol model
+  version: ^0.0.0
+
+components:
+  schemas:
+    Httpclient:
+      x-status: under-review
+      x-include: 
+      - '../common/common.yaml#/components/schemas/Named.Object'
+      description: >-
+        Emulated HTTP Client
+      type: object
+      properties:
+        url:
+          description: >-
+            url for HTTP.
+            {id} is the community object ID
+            http://localhost:8080/api/v0/sessions/0/ixload/test/activeTest/communityList/0/activityList/0/agent
+          type: string
+          default: "agent/"
+        enable_ssl:
+          description: >-
+            The HTTP SSL configs. 
+            It must be the enable for secure HTTP. 
+          type: boolean
+          default: false
+        enable_per_conn_cookie_support:
+          description: >-
+            Cookie support for per HTTP connection.
+          type: boolean
+          default: false
+        enable_auth:
+          description: >-
+            Authentication for HTTP connection
+          type: boolean
+          default: false
+        vlan_priority:
+          description: >-
+            Vlan Priority vlan id.
+          type: integer
+        validate_certificate:
+          description: >-
+            Validate Certificate.
+          type: integer
+        enable_decompress_support:
+          description: >-
+            enable decompress support.
+          type: integer
+        enable_https_proxy:
+          description: >-
+            enable Http proxy.
+          type: integer
+        exact_transactions:
+          description: >-
+            exact transactions.
+          type: integer
+        commands:
+          description: >-
+            The HTTP commands configs.
+          type: array
+          items:
+            $ref: './command.yaml#/components/schemas/Command'
+    Httpserver:
+      x-status: under-review
+      x-include: 
+      - '../common/common.yaml#/components/schemas/Named.Object'
+      description: >-
+        Emulated HTTP Client
+      type: object
+      properties:
+        url:
+          description: >-
+            url for HTTP.
+            {id} is the community object ID
+            http://localhost:8080/api/v0/sessions/0/ixload/test/activeTest/communityList/0/activityList/0/agent
+          type: string
+          default: "agent/"
+        enable_ssl_send_close_notify:
+          description: >-
+            The HTTP SSL configs. 
+            It must be the enable for secure HTTP. 
+          type: boolean
+          default: false
+        disable_mac_validation:
+          description: >-
+            Cookie support for per HTTP connection.
+          type: boolean
+          default: false
+        enable_esm:
+          description: >-
+            Authentication for HTTP connection
+          type: boolean
+          default: false
+        vlan_priority:
+          description: >-
+            Vlan Priority vlan id.
+          type: integer
+        validate_certificate:
+          description: >-
+            Validate Certificate.
+          type: integer
+        enable_hTTP2:
+          description: >-
+            enable decompress support.
+          type: integer
+        enable_tos:
+          description: >-
+            enable Http proxy.
+          type: integer
+        precedence_tOS:
+          description: >-
+            exact transactions.
+          type: integer

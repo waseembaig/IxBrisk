@@ -1,0 +1,78 @@
+openapi: 3.1.0
+
+info:
+  title: Fragments
+  version: ^0.0.0
+  description: >-
+    This file should be used as a repository for fragments that will be used
+    as a direct inline replacement where ever the keyword is found
+    
+components:
+  schemas:
+    Named.Object:
+      type: object
+      required: [name]
+      properties:
+        name:
+          description: >-
+            Globally unique name of an object.
+            It also serves as the primary key for arrays of objects.
+          type: string
+          pattern: ^[\sa-zA-Z0-9-_()><\[\]]+$
+
+    ChoiceNone:
+      description: >-
+        A empty container that is used to indicate a null choice.
+      type: object
+
+    Common.Size:
+      description: >-
+        The frame size which overrides the total length of the packet
+      type: object
+      required: [choice]
+      properties:
+        choice:
+          type: string
+          enum: [fixed, increment, random]
+        fixed:
+          type: integer
+          default: 64
+        increment:
+          $ref: '#/components/schemas/Common.SizeIncrement'
+        random:
+          $ref: '#/components/schemas/Common.SizeRandom'
+          
+    Common.SizeIncrement:
+      type: object
+      description: >-
+        Frame size that increments from a starting size to 
+        an ending size incrementing by a step size.
+      required: [start, end, step]
+      properties:
+        start:
+          description: Starting frame size in bytes
+          type: integer
+          minimum: 1
+          default: 64
+        end:
+          description: Ending frame size in bytes
+          type: integer
+          minimum: 64
+          default: 1518
+        step:
+          description: Step frame size in bytes
+          type: integer
+          default: 1
+
+    Common.SizeRandom:
+      type: object
+      description: >-
+        Random frame size from a min value to a max value.
+      required: [min, max]
+      properties:
+        min:
+          type: integer
+          default: 64
+        max:
+          type: integer
+          default: 1518

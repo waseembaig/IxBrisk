@@ -1,0 +1,20 @@
+openapi: 3.1.0
+
+info:
+  title: Emulated ethernet protocol model
+  version: ^0.0.0
+
+components:
+  schemas:
+    Vlans:
+      x-include: 
+      - '../common/common.yaml#/components/schemas/Named.Object'
+      description: >-
+        Emulated ethernet protocol.
+        MAC configurations
+      type: object
+      properties:
+        vlan:
+          description: >-
+            The Ethernet configuration such as MAC/vlan config, autonegotiation etc.
+          $ref: './vlan.yaml#/components/schemas/Vlan'

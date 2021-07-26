@@ -1,0 +1,37 @@
+openapi: 3.0.3
+
+info:
+  title: Open Traffic Generator API
+  description: >-
+    The open traffic generator API
+  version: 0.2.1
+  contact:
+    name: Open Traffic Generator Project Team
+    email: andy.balogh@keysight.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers: 
+  - url: /
+
+paths: 
+  /config:
+    post:
+      tags: [Configuration]
+      operationId: set_config
+      description: >-
+        Sets configuration resources on the traffic generator.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../config/config.yaml#/components/schemas/Config'
+      responses:
+        '200':
+          $ref: '../result/request.yaml#/components/responses/Success'
+        '400':
+          $ref: '../result/request.yaml#/components/responses/Conflict'
+        '500':
+          $ref: '../result/request.yaml#/components/responses/Fail'

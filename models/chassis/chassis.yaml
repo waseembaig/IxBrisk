@@ -1,0 +1,54 @@
+openapi: 3.1.0
+
+info:
+  title: Port models
+  version: ^0.0.0
+
+components:
+  schemas:
+    Chassis:
+      x-include: 
+      - '../common/common.yaml#/components/schemas/Named.Object'
+      description: >-
+        An abstract test port.
+      type: object
+      properties:
+        url:
+          description: >-
+            url for portList.
+            {id} is the community object ID
+          type: string
+          default: 'ixload/chassischain/chassisList/'
+        location:
+          description: >- 
+            The location of a test port. 
+            It is the endpoint where packets will emit from.
+            Test port locations can be the following:
+              - physical appliance with multiple ports
+              - physical chassis with multiple cards and ports
+              - local interface
+            The test port location format is implementation specific.
+            Use the /results/capabilities API to determine what formats an 
+            implementation supports for the location property.
+            Get the configured location state by using the /results/port API.
+          type: string
+        name:
+          description: >- 
+            The name of port
+          type: string
+
+    Port.Options:
+      description: >-
+        Common port options that apply to all configured Port objects. 
+      type: object
+      properties:
+        location_preemption:
+          description: >-
+            Preempt all the test port locations as defined by the 
+            Port.Port.properties.location.
+            If the test ports defined by their location values are in use and 
+            this value is true, the test ports will be preempted.
+          type: boolean
+          default: false
+
+ 

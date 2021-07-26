@@ -1,0 +1,792 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Open Traffic Generator API",
+        "description": "The open traffic generator API",
+        "version": "0.2.1",
+        "contact": {
+            "name": "Open Traffic Generator Project Team",
+            "email": "andy.balogh@keysight.com"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        }
+    },
+    "servers": [
+        {
+            "url": "/"
+        }
+    ],
+    "paths": {
+        "/config": {
+            "post": {
+                "tags": [
+                    "Configuration"
+                ],
+                "operationId": "set_config",
+                "description": "Sets configuration resources on the traffic generator.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Config"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/Success"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/Conflict"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/Fail"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "responses": {
+            "Success": {
+                "description": "The request has succeeded. Detailed warnings if any will be returned as a list.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Details"
+                        }
+                    }
+                }
+            },
+            "SuccessNoContent": {
+                "description": "The traffic generator has successfully completed the request and there is no content to return."
+            },
+            "Pending": {
+                "description": "The traffic generator is currently processing the request which has  not yet completed. If a traffic generator implementation follows an asynchronous model it  should use this response to indicate that an operation has been  accepted but has not completed.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Pending.Detail"
+                        }
+                    }
+                }
+            },
+            "Conflict": {
+                "description": "The request is denied as the traffic generator is currently processing  another request.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Details"
+                        }
+                    }
+                }
+            },
+            "Fail": {
+                "description": "The request has failed. Detailed errors will be returned as a list.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Details"
+                        }
+                    }
+                }
+            }
+        },
+        "schemas": {
+            "Config": {
+                "description": "A container for all models that are part of the configuration.",
+                "type": "object",
+                "properties": {
+                    "chassis": {
+                        "description": "Adding chassis configuration.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Chassis"
+                        }
+                    },
+                    "scenarios": {
+                        "description": "The Community will be configured on the Ixload traffic generator.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Scenario"
+                        }
+                    }
+                }
+            },
+            "Chassis": {
+                "description": "An abstract test port.",
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "description": "url for portList. {id} is the community object ID",
+                        "type": "string",
+                        "default": "ixload/chassischain/chassisList/"
+                    },
+                    "location": {
+                        "description": "The location of a test port.  It is the endpoint where packets will emit from. Test port locations can be the following:\n  - physical appliance with multiple ports\n  - physical chassis with multiple cards and ports\n  - local interface\nThe test port location format is implementation specific. Use the /results/capabilities API to determine what formats an  implementation supports for the location property. Get the configured location state by using the /results/port API.",
+                        "type": "string"
+                    },
+                    "name": {
+                        "description": "The name of port\nGlobally unique name of an object. It also serves as the primary key for arrays of objects.",
+                        "type": "string",
+                        "pattern": "^[\\sa-zA-Z0-9-_()><\\[\\]]+$"
+                    }
+                },
+                "required": [
+                    "name"
+                ]
+            },
+            "Port.Options": {
+                "description": "Common port options that apply to all configured Port objects. ",
+                "type": "object",
+                "properties": {
+                    "location_preemption": {
+                        "description": "Preempt all the test port locations as defined by the  Port.Port.properties.location. If the test ports defined by their location values are in use and  this value is true, the test ports will be preempted.",
+                        "type": "boolean",
+                        "default": false
+                    }
+                }
+            },
+            "Scenario": {
+                "description": "A container for Tests settings.",
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "description": "url for community. {id} is the community object ID",
+                        "type": "string",
+                        "default": "ixload/test/activeTest/communityList/{id}/"
+                    },
+                    "name": {
+                        "description": "Media access control address (MAC) is a 48bit identifier for use as a network address. The value can be an int or a hex string with or without spaces or  colons separating each byte. The min value is 0 or '00:00:00:00:00:00'. The max value is 281474976710655 or 'FF:FF:FF:FF:FF:FF'.\nGlobally unique name of an object. It also serves as the primary key for arrays of objects.",
+                        "$ref": "#/components/schemas/Device.Pattern",
+                        "type": "string",
+                        "pattern": "^[\\sa-zA-Z0-9-_()><\\[\\]]+$"
+                    },
+                    "networks": {
+                        "description": "The container for link aggregation control protocol settings.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Network"
+                        }
+                    }
+                },
+                "required": [
+                    "name"
+                ]
+            },
+            "Device.Pattern": {
+                "description": "A container for emulated device property patterns.",
+                "type": "object",
+                "required": [
+                    "choice"
+                ],
+                "properties": {
+                    "choice": {
+                        "type": "string",
+                        "enum": [
+                            "value",
+                            "values",
+                            "increment",
+                            "decrement"
+                        ]
+                    },
+                    "value": {
+                        "type": "string"
+                    },
+                    "values": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "increment": {
+                        "$ref": "#/components/schemas/Device.Counter"
+                    },
+                    "decrement": {
+                        "$ref": "#/components/schemas/Device.Counter"
+                    }
+                }
+            },
+            "Device.Counter": {
+                "description": "An incrementing pattern.",
+                "type": "object",
+                "properties": {
+                    "start": {
+                        "type": "string"
+                    },
+                    "step": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Network": {
+                "description": "Network configuration for communities",
+                "type": "object",
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "url": {
+                        "description": "url for network. {id} is the community object ID",
+                        "type": "string",
+                        "default": "network/"
+                    },
+                    "name": {
+                        "description": "Name of the network.\nGlobally unique name of an object. It also serves as the primary key for arrays of objects.",
+                        "type": "string",
+                        "pattern": "^[\\sa-zA-Z0-9-_()><\\[\\]]+$"
+                    },
+                    "aggregation": {
+                        "description": "Aggregation assigned to the network",
+                        "type": "integer"
+                    },
+                    "lineSpeed": {
+                        "description": "lineSpeed assigned to the network",
+                        "type": "string"
+                    },
+                    "ethernet": {
+                        "description": "The Ethernet configuration such as MAC/vlan config, autonegotiation etc.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Ethernet"
+                        }
+                    },
+                    "ipv4": {
+                        "description": "The Ipv4 configs.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Ipv4"
+                        }
+                    },
+                    "protocols": {
+                        "description": "protocol creations.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Protocol"
+                        }
+                    },
+                    "ports": {
+                        "description": "port configuration",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Port"
+                        }
+                    }
+                }
+            },
+            "Ethernet": {
+                "description": "Emulated ethernet protocol. MAC configurations",
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "description": "url for ethernet -> Id is the stack ID of ethernet ->http://localhost:8080/api/v0/sessions/0/ixload/test/activeTest/communityList/0/network/stack/childrenList/2/macRangeList",
+                        "type": "string",
+                        "default": "stack/childrenList/{id}/macRangeList/"
+                    },
+                    "mac": {
+                        "description": "Media access control address (MAC) is a 48bit identifier for use as a network address. The value can be an int or a hex string with or without spaces or  colons separating each byte. The min value is 0 or '00:00:00:00:00:00'. The max value is 281474976710655 or 'FF:FF:FF:FF:FF:FF'.",
+                        "$ref": "#/components/schemas/Device.Pattern"
+                    },
+                    "mtu": {
+                        "description": "Maximum transmission unit. default is 1500",
+                        "$ref": "#/components/schemas/Device.Pattern"
+                    },
+                    "incrementBy": {
+                        "description": "List of vlans",
+                        "$ref": "#/components/schemas/Device.Pattern"
+                    },
+                    "count": {
+                        "description": "Count for the MAC.",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "Name of the Mac object.\nGlobally unique name of an object. It also serves as the primary key for arrays of objects.",
+                        "$ref": "#/components/schemas/Named.Object",
+                        "type": "string",
+                        "pattern": "^[\\sa-zA-Z0-9-_()><\\[\\]]+$"
+                    },
+                    "vlans": {
+                        "description": "The Ethernet configuration such as MAC/vlan config, autonegotiation etc.",
+                        "$ref": "#/components/schemas/Vlans"
+                    }
+                },
+                "required": [
+                    "name"
+                ]
+            },
+            "Named.Object": {
+                "type": "object",
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "Globally unique name of an object. It also serves as the primary key for arrays of objects.",
+                        "type": "string",
+                        "pattern": "^[\\sa-zA-Z0-9-_()><\\[\\]]+$"
+                    }
+                }
+            },
+            "ChoiceNone": {
+                "description": "A empty container that is used to indicate a null choice.",
+                "type": "object"
+            },
+            "Common.Size": {
+                "description": "The frame size which overrides the total length of the packet",
+                "type": "object",
+                "required": [
+                    "choice"
+                ],
+                "properties": {
+                    "choice": {
+                        "type": "string",
+                        "enum": [
+                            "fixed",
+                            "increment",
+                            "random"
+                        ]
+                    },
+                    "fixed": {
+                        "type": "integer",
+                        "default": 64
+                    },
+                    "increment": {
+                        "$ref": "#/components/schemas/Common.SizeIncrement"
+                    },
+                    "random": {
+                        "$ref": "#/components/schemas/Common.SizeRandom"
+                    }
+                }
+            },
+            "Common.SizeIncrement": {
+                "type": "object",
+                "description": "Frame size that increments from a starting size to  an ending size incrementing by a step size.",
+                "required": [
+                    "start",
+                    "end",
+                    "step"
+                ],
+                "properties": {
+                    "start": {
+                        "description": "Starting frame size in bytes",
+                        "type": "integer",
+                        "minimum": 1,
+                        "default": 64
+                    },
+                    "end": {
+                        "description": "Ending frame size in bytes",
+                        "type": "integer",
+                        "minimum": 64,
+                        "default": 1518
+                    },
+                    "step": {
+                        "description": "Step frame size in bytes",
+                        "type": "integer",
+                        "default": 1
+                    }
+                }
+            },
+            "Common.SizeRandom": {
+                "type": "object",
+                "description": "Random frame size from a min value to a max value.",
+                "required": [
+                    "min",
+                    "max"
+                ],
+                "properties": {
+                    "min": {
+                        "type": "integer",
+                        "default": 64
+                    },
+                    "max": {
+                        "type": "integer",
+                        "default": 1518
+                    }
+                }
+            },
+            "Vlans": {
+                "description": "Emulated ethernet protocol. MAC configurations",
+                "type": "object",
+                "properties": {
+                    "vlan": {
+                        "description": "The Ethernet configuration such as MAC/vlan config, autonegotiation etc.",
+                        "$ref": "#/components/schemas/Vlan"
+                    },
+                    "name": {
+                        "description": "Globally unique name of an object. It also serves as the primary key for arrays of objects.",
+                        "type": "string",
+                        "pattern": "^[\\sa-zA-Z0-9-_()><\\[\\]]+$"
+                    }
+                },
+                "required": [
+                    "name"
+                ]
+            },
+            "Vlan": {
+                "description": "Emulated ethernet protocol. MAC configurations",
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "description": "url for Vlan -> Id is the stack ID of ethernet ->http://localhost:8080/api/v0/sessions/0/ixload/test/activeTest/communityList/0/network/stack/childrenList/2/vlanRangeList",
+                        "type": "string",
+                        "default": "childrenList/{Id}/vlanRangeList"
+                    },
+                    "incrementBy": {
+                        "description": "A value to increment for Vlan ",
+                        "type": "string",
+                        "items": {
+                            "$ref": "#/components/schemas/Common.SizeIncrement"
+                        }
+                    },
+                    "uniqueCount": {
+                        "description": "Count for the MAC.",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "Name of the Mac object.\nGlobally unique name of an object. It also serves as the primary key for arrays of objects.",
+                        "$ref": "#/components/schemas/Named.Object",
+                        "type": "string",
+                        "pattern": "^[\\sa-zA-Z0-9-_()><\\[\\]]+$"
+                    }
+                },
+                "required": [
+                    "name"
+                ]
+            },
+            "Ipv4": {
+                "description": "Emulated ipv4 interface",
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "description": "url for ethernet -> Id is the stack ID of ethernet -> Id2 is the IPV stack objectID ->http://localhost:8080/api/v0/sessions/0/ixload/test/activeTest/communityList/0/network/stack/childrenList/2/childrenList/3/rangeList",
+                        "type": "string",
+                        "default": "childrenList/{id}/rangeList"
+                    },
+                    "address": {
+                        "description": "The ipv4 address.",
+                        "$ref": "#/components/schemas/Device.Pattern"
+                    },
+                    "gateway": {
+                        "description": "The ipv4 address of the gateway.",
+                        "$ref": "#/components/schemas/Device.Pattern"
+                    },
+                    "prefix": {
+                        "description": "The prefix of the ipv4 address.",
+                        "$ref": "#/components/schemas/Device.Pattern"
+                    },
+                    "count": {
+                        "description": "Count for the MAC.",
+                        "type": "integer"
+                    }
+                }
+            },
+            "Protocol": {
+                "description": "A container for emulated protocol devices.",
+                "type": "object",
+                "required": [
+                    "protocol_name",
+                    "name"
+                ],
+                "properties": {
+                    "url": {
+                        "description": "url for protocol|activity list. {id} is the community object ID http://localhost:8080/api/v0/sessions/0/ixload/test/activeTest/communityList/0/activityList",
+                        "type": "string",
+                        "default": "activityList/{id}/"
+                    },
+                    "protocol_name": {
+                        "description": "The unique name of a Port or Lag object that will contain the  emulated interfaces and/or devices.",
+                        "type": "string",
+                        "x-constraint": [
+                            "/components/schemas/Port/properties/name"
+                        ]
+                    },
+                    "httpclient": {
+                        "description": "The HTTP client protocol.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Httpclient"
+                        }
+                    },
+                    "httpserver": {
+                        "description": "The HTTP server protocol.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Httpserver"
+                        }
+                    },
+                    "ftpclient": {
+                        "description": "The FTP client protocol.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Ftpclient"
+                        }
+                    },
+                    "name": {
+                        "description": "Globally unique name of an object. It also serves as the primary key for arrays of objects.",
+                        "type": "string",
+                        "pattern": "^[\\sa-zA-Z0-9-_()><\\[\\]]+$"
+                    }
+                }
+            },
+            "Httpclient": {
+                "x-status": "under-review",
+                "description": "Emulated HTTP Client",
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "description": "url for HTTP. {id} is the community object ID http://localhost:8080/api/v0/sessions/0/ixload/test/activeTest/communityList/0/activityList/0/agent",
+                        "type": "string",
+                        "default": "agent/"
+                    },
+                    "enable_ssl": {
+                        "description": "The HTTP SSL configs.  It must be the enable for secure HTTP. ",
+                        "type": "boolean",
+                        "default": false
+                    },
+                    "enable_per_conn_cookie_support": {
+                        "description": "Cookie support for per HTTP connection.",
+                        "type": "boolean",
+                        "default": false
+                    },
+                    "enable_auth": {
+                        "description": "Authentication for HTTP connection",
+                        "type": "boolean",
+                        "default": false
+                    },
+                    "vlan_priority": {
+                        "description": "Vlan Priority vlan id.",
+                        "type": "integer"
+                    },
+                    "validate_certificate": {
+                        "description": "Validate Certificate.",
+                        "type": "integer"
+                    },
+                    "enable_decompress_support": {
+                        "description": "enable decompress support.",
+                        "type": "integer"
+                    },
+                    "enable_https_proxy": {
+                        "description": "enable Http proxy.",
+                        "type": "integer"
+                    },
+                    "exact_transactions": {
+                        "description": "exact transactions.",
+                        "type": "integer"
+                    },
+                    "commands": {
+                        "description": "The HTTP commands configs.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Command"
+                        }
+                    },
+                    "name": {
+                        "description": "Globally unique name of an object. It also serves as the primary key for arrays of objects.",
+                        "type": "string",
+                        "pattern": "^[\\sa-zA-Z0-9-_()><\\[\\]]+$"
+                    }
+                },
+                "required": [
+                    "name"
+                ]
+            },
+            "Httpserver": {
+                "x-status": "under-review",
+                "description": "Emulated HTTP Client",
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "description": "url for HTTP. {id} is the community object ID http://localhost:8080/api/v0/sessions/0/ixload/test/activeTest/communityList/0/activityList/0/agent",
+                        "type": "string",
+                        "default": "agent/"
+                    },
+                    "enable_ssl_send_close_notify": {
+                        "description": "The HTTP SSL configs.  It must be the enable for secure HTTP. ",
+                        "type": "boolean",
+                        "default": false
+                    },
+                    "disable_mac_validation": {
+                        "description": "Cookie support for per HTTP connection.",
+                        "type": "boolean",
+                        "default": false
+                    },
+                    "enable_esm": {
+                        "description": "Authentication for HTTP connection",
+                        "type": "boolean",
+                        "default": false
+                    },
+                    "vlan_priority": {
+                        "description": "Vlan Priority vlan id.",
+                        "type": "integer"
+                    },
+                    "validate_certificate": {
+                        "description": "Validate Certificate.",
+                        "type": "integer"
+                    },
+                    "enable_hTTP2": {
+                        "description": "enable decompress support.",
+                        "type": "integer"
+                    },
+                    "enable_tos": {
+                        "description": "enable Http proxy.",
+                        "type": "integer"
+                    },
+                    "precedence_tOS": {
+                        "description": "exact transactions.",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "Globally unique name of an object. It also serves as the primary key for arrays of objects.",
+                        "type": "string",
+                        "pattern": "^[\\sa-zA-Z0-9-_()><\\[\\]]+$"
+                    }
+                },
+                "required": [
+                    "name"
+                ]
+            },
+            "Command": {
+                "description": "Commands config such GET, PUT ",
+                "type": "object",
+                "required": [
+                    "command_type"
+                ],
+                "properties": {
+                    "url": {
+                        "description": "url for ethernet -> Id is the stack ID of ethernet -> Id2 is the IPV stack objectID ->http://localhost:8080/api/v0/sessions/11/ixload/test/activeTest/communityList/0/activityList/0/agent/actionList",
+                        "type": "string",
+                        "default": "actionList/"
+                    },
+                    "command_type": {
+                        "description": "The ipv4 address.",
+                        "type": "string"
+                    },
+                    "profile": {
+                        "description": "Count for the MAC.",
+                        "type": "integer",
+                        "default": -1
+                    },
+                    "enable_di": {
+                        "description": "The ipv4 address of the gateway.",
+                        "type": "integer",
+                        "default": 0
+                    },
+                    "destination": {
+                        "description": "The prefix of the ipv4 address.",
+                        "type": "string"
+                    },
+                    "page_object": {
+                        "description": "Count for the MAC.",
+                        "type": "string"
+                    }
+                }
+            },
+            "Ftpclient": {
+                "x-status": "under-review",
+                "description": "Emulated FTP Client",
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "description": "url for HTTP. {id} is the community object ID http://localhost:8080/api/v0/sessions/0/ixload/test/activeTest/communityList/0/activityList/0/agent",
+                        "type": "string",
+                        "default": "agent"
+                    },
+                    "enable_ssl": {
+                        "description": "The HTTP SSL configs.  It must be the enable for secure HTTP. ",
+                        "type": "boolean",
+                        "default": false
+                    },
+                    "enable_per_conn_cookie_support": {
+                        "description": "Cookie support for per HTTP connection.",
+                        "type": "boolean",
+                        "default": false
+                    },
+                    "enable_auth": {
+                        "description": "Authentication for HTTP connection",
+                        "type": "boolean",
+                        "default": false
+                    },
+                    "name": {
+                        "description": "Globally unique name of an object. It also serves as the primary key for arrays of objects.",
+                        "type": "string",
+                        "pattern": "^[\\sa-zA-Z0-9-_()><\\[\\]]+$"
+                    }
+                },
+                "required": [
+                    "name"
+                ]
+            },
+            "Port": {
+                "description": "An abstract test port.",
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "description": "url for portList. {id} is the community object ID",
+                        "type": "string",
+                        "default": "portList/"
+                    },
+                    "chassis_id": {
+                        "description": "The chassis id  of port",
+                        "type": "integer"
+                    },
+                    "card_id": {
+                        "description": "The card id  of port",
+                        "type": "integer"
+                    },
+                    "port_id": {
+                        "description": "The port id  of port",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "Globally unique name of an object. It also serves as the primary key for arrays of objects.",
+                        "type": "string",
+                        "pattern": "^[\\sa-zA-Z0-9-_()><\\[\\]]+$"
+                    }
+                },
+                "required": [
+                    "name"
+                ]
+            },
+            "Pending.Detail": {
+                "description": "The standard response to any request. This allows an implementation to be either async or sync.",
+                "type": "object",
+                "properties": {
+                    "state": {
+                        "type": "string",
+                        "enum": [
+                            "pending",
+                            "success"
+                        ]
+                    },
+                    "url": {
+                        "description": "The url to poll while the state is pending.",
+                        "type": "string"
+                    }
+                }
+            },
+            "Details": {
+                "type": "object",
+                "properties": {
+                    "errors": {
+                        "description": "A list of any errors that may have occurred while executing the request.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "warnings": {
+                        "description": "A list of any warnings generated while executing the request.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,65 @@
+components:
+  schemas:
+    Network:
+      x-include: 
+      - '../common/common.yaml#/components/schemas/Named.Object'
+      description: >-
+        Network configuration for communities
+      type: object
+      required: [name]
+      properties:
+        url:
+          description: >-
+            url for network.
+            {id} is the community object ID
+          type: string
+          default: "network/"
+        name:
+          description: >-
+            Name of the network.
+          type: string
+        aggregation:
+          description: >-
+            Aggregation assigned to the network
+          type: integer
+        lineSpeed:
+          description: >-
+            lineSpeed assigned to the network
+          type: string
+        #port_name:
+        #  description: >-
+        #    Port Name assigned to the network.
+        #  type: string
+        #tx_port_name :
+        #  description: >-
+        #    tx_port_name  connecting to the network.
+        #  type: string
+        #rx_port_name :
+        #  description: >-
+        #    rx_port_name  connecting to the network.
+        #  type: string
+        ethernet:
+          description: >-
+            The Ethernet configuration such as MAC/vlan config, autonegotiation etc.
+          type: array
+          items:
+            $ref: '../ethernet/ethernet.yaml#/components/schemas/Ethernet'
+        ipv4:
+          description: >-
+            The Ipv4 configs.
+          type: array
+          items:
+            $ref: '../ipv4/ipv4.yaml#/components/schemas/Ipv4'
+        protocols:
+          description: >-
+            protocol creations.
+          type: array
+          items:
+            $ref: '../protocol/protocol.yaml#/components/schemas/Protocol'
+        ports:
+          description:
+            port configuration
+          type: array
+          items:
+            $ref: '../port/port.yaml#/components/schemas/Port'
+        

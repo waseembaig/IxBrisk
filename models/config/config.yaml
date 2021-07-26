@@ -1,0 +1,27 @@
+openapi: 3.1.0
+
+info:
+  title: Configuration models
+  version: ^0.0.0
+
+components:
+  schemas:
+    Config:
+      description: >-
+        A container for all models that are part of the configuration.
+      type: object
+      properties:
+        chassis:
+          description: >-
+            Adding chassis configuration.
+          type: array
+          items:
+            $ref: '../chassis/chassis.yaml#/components/schemas/Chassis'
+        scenarios:
+          description: >-
+            The Community will be configured on the Ixload traffic generator.
+          type: array
+          items:
+            $ref: '../scenario/scenario.yaml#/components/schemas/Scenario'
+
+

@@ -1,0 +1,36 @@
+openapi: 3.1.0
+
+info:
+  title: Link aggregation (LAG) models
+  version: ^0.0.0
+
+components:
+  schemas:
+    Scenario:
+      x-include: 
+      - '../common/common.yaml#/components/schemas/Named.Object'
+      description: >-
+        A container for Tests settings.
+      type: object
+      properties:
+        url:
+          description: >-
+            url for community.
+            {id} is the community object ID
+          type: string
+          default: "ixload/test/activeTest/communityList/{id}/"
+        name:
+          description: >-
+            Media access control address (MAC) is a 48bit identifier
+            for use as a network address.
+            The value can be an int or a hex string with or without spaces or 
+            colons separating each byte.
+            The min value is 0 or '00:00:00:00:00:00'.
+            The max value is 281474976710655 or 'FF:FF:FF:FF:FF:FF'.
+          $ref: '../common/patterns.yaml#/components/schemas/Device.Pattern'
+        networks:
+          description: >-
+            The container for link aggregation control protocol settings.
+          type: array
+          items:
+            $ref: '../network/network.yaml#/components/schemas/Network'

@@ -1,0 +1,39 @@
+openapi: 3.1.0
+
+info:
+  title: Emulated ethernet protocol model
+  version: ^0.0.0
+
+components:
+  schemas:
+    Ftpclient:
+      x-status: under-review
+      x-include: 
+      - '../common/common.yaml#/components/schemas/Named.Object'
+      description: >-
+        Emulated FTP Client
+      type: object
+      properties:
+        url:
+          description: >-
+            url for HTTP.
+            {id} is the community object ID
+            http://localhost:8080/api/v0/sessions/0/ixload/test/activeTest/communityList/0/activityList/0/agent
+          type: string
+          default: "agent"
+        enable_ssl:
+          description: >-
+            The HTTP SSL configs. 
+            It must be the enable for secure HTTP. 
+          type: boolean
+          default: false
+        enable_per_conn_cookie_support:
+          description: >-
+            Cookie support for per HTTP connection.
+          type: boolean
+          default: false
+        enable_auth:
+          description: >-
+            Authentication for HTTP connection
+          type: boolean
+          default: false

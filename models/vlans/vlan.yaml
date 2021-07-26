@@ -1,0 +1,37 @@
+openapi: 3.1.0
+
+info:
+  title: Emulated ethernet protocol model
+  version: ^0.0.0
+
+components:
+  schemas:
+    Vlan:
+      x-include: 
+      - '../common/common.yaml#/components/schemas/Named.Object'
+      description: >-
+        Emulated ethernet protocol.
+        MAC configurations
+      type: object
+      properties:
+        url:
+          description: >-
+            url for Vlan
+            -> Id is the stack ID of ethernet
+            ->http://localhost:8080/api/v0/sessions/0/ixload/test/activeTest/communityList/0/network/stack/childrenList/2/vlanRangeList
+          type: string
+          default: "childrenList/{Id}/vlanRangeList"
+        incrementBy:
+          description: >-
+            A value to increment for Vlan 
+          type: string
+          items:
+            $ref: '../common/common.yaml#/components/schemas/Common.SizeIncrement'
+        uniqueCount:
+          description: >-
+            Count for the MAC.
+          type: integer
+        name:
+          description: >-
+            Name of the Mac object.
+          $ref: '../common/common.yaml#/components/schemas/Named.Object'

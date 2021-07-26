@@ -1,0 +1,52 @@
+openapi: 3.1.0
+
+info:
+  title: Emulated ethernet protocol model
+  version: ^0.0.0
+  
+components:
+  schemas:
+    Ethernet:
+      x-include: 
+      - '../common/common.yaml#/components/schemas/Named.Object'
+      description: >-
+        Emulated ethernet protocol.
+        MAC configurations
+      type: object
+      properties:
+        url:
+          description: >-
+            url for ethernet
+            -> Id is the stack ID of ethernet
+            ->http://localhost:8080/api/v0/sessions/0/ixload/test/activeTest/communityList/0/network/stack/childrenList/2/macRangeList
+          type: string
+          default: "stack/childrenList/{id}/macRangeList/"
+        mac:
+          description: >-
+            Media access control address (MAC) is a 48bit identifier
+            for use as a network address.
+            The value can be an int or a hex string with or without spaces or 
+            colons separating each byte.
+            The min value is 0 or '00:00:00:00:00:00'.
+            The max value is 281474976710655 or 'FF:FF:FF:FF:FF:FF'.
+          $ref: '../common/patterns.yaml#/components/schemas/Device.Pattern'
+        mtu:
+          description: >-
+            Maximum transmission unit. default is 1500
+          $ref: '../common/patterns.yaml#/components/schemas/Device.Pattern'
+        incrementBy:
+          description: >-
+            List of vlans
+          $ref: '../common/patterns.yaml#/components/schemas/Device.Pattern'
+        count:
+          description: >-
+            Count for the MAC.
+          type: integer
+        name:
+          description: >-
+            Name of the Mac object.
+          $ref: '../common/common.yaml#/components/schemas/Named.Object'
+        vlans:
+          description: >-
+            The Ethernet configuration such as MAC/vlan config, autonegotiation etc.
+          $ref: '../vlans/vlans.yaml#/components/schemas/Vlans'

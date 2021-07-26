@@ -1,0 +1,49 @@
+openapi: 3.1.0
+
+info:
+  title: Emulated ethernet protocol model
+  version: ^0.0.0
+
+components:
+  schemas:
+    Protocol:
+      x-include: 
+      - '../common/common.yaml#/components/schemas/Named.Object'
+      description: >-
+        A container for emulated protocol devices.
+      type: object
+      required: [protocol_name]
+      properties:
+        url:
+          description: >-
+            url for protocol|activity list.
+            {id} is the community object ID
+            http://localhost:8080/api/v0/sessions/0/ixload/test/activeTest/communityList/0/activityList
+          type: string
+          default: "activityList/{id}/"
+        protocol_name: 
+          description: >-
+            The unique name of a Port or Lag object that will contain the 
+            emulated interfaces and/or devices.
+          type: string
+          x-constraint:
+          - '/components/schemas/Port/properties/name'
+        httpclient:
+          description: >-
+            The HTTP client protocol.
+          type: array
+          items:
+            $ref: './http.yaml#/components/schemas/Httpclient'
+        httpserver:
+          description: >-
+            The HTTP server protocol.
+          type: array
+          items:
+            $ref: './http.yaml#/components/schemas/Httpserver'
+        ftpclient:
+          description: >-
+            The FTP client protocol.
+          type: array
+          items:
+            $ref: './ftp.yaml#/components/schemas/Ftpclient'
+
